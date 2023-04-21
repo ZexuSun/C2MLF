@@ -107,7 +107,3 @@ def train_model(factor_model, trainloader, valloader, args):
                 val_losses.append(val_loss)
             factor_val_loss = sum(val_losses) / len(val_losses)
         print("epoch {} ---- train_loss:{:.5f} val_loss:{:.5f}".format(epoch+1, factor_train_loss, factor_val_loss))
-        # if epoch % 5 == 0:
-        #     if not os.path.exists('./checkpoints'):
-        #         os.mkdir('./checkpoints')
-        #     torch.save(factor_model.state_dict(), './checkpoints/TSD_torch.pth')
