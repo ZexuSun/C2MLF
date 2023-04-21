@@ -99,7 +99,8 @@ def train_model(factor_model, trainloader, valloader, args):
                 #term_c
                 loss_c = factor_model.term_c_1(confounders, ivs) + factor_model.term_c_2(covariates, ivs)
                 #term_d
-                loss_d = factor_model.term_d(torch.cat([outcomes, treatment_targets], dim=-1), torch.cat([ivs, treatment_targets], dim=-1))
+                loss_d = factor_model.term_d(torch.cat([outcomes, treatment_targets, covariates, confounders], dim=-1),
+                                         torch.cat([ivs, treatment_targets, covariates, confounders], dim=-1))
 
                 #total loss
                 val_loss = -loss_a - loss_b + args.alpha * loss_c + args.beta * loss_d
