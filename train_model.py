@@ -20,24 +20,12 @@ def train_model(factor_model, trainloader, valloader, args):
             
             confounder_pred_treatments, iv_pred_treatments, confounders, ivs = factor_model(previous_covariates, previous_treatments, covariates)
             
-            #city_emb = factor_model.embed(torch.tensor(covariates[:,:, 0]).long())
-            #covariates = torch.cat([city_emb, covariates[:,:,1:]], dim=-1)
             #for reshape
             treatment_targets = treatments.reshape(-1, factor_model.num_treatments).float()
             covariates = covariates.reshape(-1, factor_model.num_covariates).float()
             outcomes = outcomes.reshape(-1, 1).float()
             confounders = confounders.reshape(-1, factor_model.num_confounders).float()
             ivs = ivs.reshape(-1, factor_model.num_ivs).float()
-            # print(confounders.shape, 'confounders shape')
-            # train_confounder_loss = loss_function(confounder_pred_treatments, treatment_targets) - \
-            #         factor_model.confounder_mi(torch.cat([covariates, confounders], dim=-1), torch.cat([covariates, treatment_targets], dim=-1))
-
-            # #iv and confounder are independent, and iv and outcome are independent when given treatment
-            # train_iv_loss = loss_function(iv_pred_treatments, treatment_targets) + \
-            #         factor_model.iv_mi(torch.cat([treatment_targets, ivs], dim=-1), torch.cat([treatment_targets, outcomes], dim=-1))
-
-            # #iv and confounder are independent
-            # train_independent_loss = factor_model.independent_mi(confounders, ivs)
 
             #term_a
             loss_a = factor_model.term_a(torch.cat([covariates, confounders, ivs], dim=-1), treatment_targets)
@@ -69,30 +57,16 @@ def train_model(factor_model, trainloader, valloader, args):
                     covariates.cuda(args.cuda_id), treatments.cuda(args.cuda_id), outcomes.cuda(args.cuda_id)
 
                 confounder_pred_treatments, iv_pred_treatments, confounders, ivs = factor_model(previous_covariates, previous_treatments, covariates)
-                #city_emb = factor_model.embed(torch.tensor(covariates[:,:, 0]).long())
-                #covariates = torch.cat([city_emb, covariates[:,:,1:]], dim=-1)
+
                 #for reshape
                 treatment_targets = treatments.reshape(-1, factor_model.num_treatments).float()
                 covariates = covariates.reshape(-1, factor_model.num_covariates).float()
                 outcomes = outcomes.reshape(-1, 1).float()
                 confounders = confounders.reshape(-1, factor_model.num_confounders).float()
                 ivs = ivs.reshape(-1, factor_model.num_ivs).float()
-                # for index in range(factor_model.num_treatments):
-                #     #confounder loss
+
                    
-                #val_confounder_loss = loss_function(confounder_pred_treatments, treatment_targets) - \
-                #    factor_model.confounder_mi(torch.cat([covariates, confounders], dim=-1), torch.cat([covariates, treatment_targets], dim=-1))
-
-                #iv loss
-                #val_iv_loss = loss_function(iv_pred_treatments, treatment_targets) + \
-                #    factor_model.iv_mi(torch.cat([treatment_targets, ivs], dim=-1), torch.cat([treatment_targets, outcomes], dim=-1))
-
-                #iv and confounder are independent
-                #val_independent_loss = factor_model.independent_mi(confounders, ivs)
-
-
-                #val_loss = val_confounder_loss + val_iv_loss + val_independent_loss
-
+                #term_a
                 loss_a = factor_model.term_a(torch.cat([covariates, confounders, ivs], dim=-1), treatment_targets)
                 #term_b
                 loss_b = factor_model.term_b(torch.cat([covariates, confounders, treatment_targets], dim=-1), outcomes)
