@@ -38,7 +38,8 @@ class FactorModel(nn.Module):
         self.term_b = InfoNCE(self.num_covariates+self.num_confounders+self.num_treatments, self.num_outcomes)
         self.term_c_1 = CLUB(self.num_confounders, self.num_ivs)
         self.term_c_2 = CLUB(self.num_covariates, self.num_ivs)
-        self.term_d = CLUB(self.num_outcomes+self.num_treatments, self.num_ivs+self.num_treatments)
+        self.term_d = CLUB(self.num_outcomes+self.num_treatments+self.num_covariates+self.num_confounders,\
+                           self.num_ivs+self.num_treatments+self.num_covariates+self.num_confounders)
 
 
         #confounder lstm generation
